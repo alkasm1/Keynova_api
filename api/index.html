@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Keynova API – القفل الإدراكي</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0d0d0d;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+    header {
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #4b0082, #000);
+    }
+    h1 {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+    p {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+    .container {
+        margin: 40px auto;
+        max-width: 600px;
+        background: #111;
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #333;
+    }
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: none;
+        background: #222;
+        color: #fff;
+    }
+    button {
+        padding: 12px 25px;
+        background: #6a0dad;
+        border: none;
+        color: #fff;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    button:hover {
+        background: #520a9e;
+    }
+    .result {
+        margin-top: 20px;
+        background: #1a1a1a;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 14px;
+        word-wrap: break-word;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Keynova API</h1>
+    <p>نظام القفل الإدراكي – صورة + كلمة مرور = مفتاح غير قابل للكسر</p>
+</header>
+
+<div class="container">
+    <h2>🔐 تجربة إنشاء مفتاح</h2>
+    <input type="file" id="imageInput">
+    <input type="text" id="passwordInput" placeholder="أدخل كلمة المرور">
+    <button onclick="generateKey()">إنشاء المفتاح</button>
+
+    <div id="generateResult" class="result"></div>
+</div>
+
+<div class="container">
+    <h2>🧪 تجربة التحقق من المفتاح</h2>
+    <input type="file" id="verifyImage">
+    <input type="text" id="verifyPassword" placeholder="أدخل كلمة المرور">
+    <textarea id="verifyFinalKey" placeholder="الصق المفتاح النهائي هنا"></textarea>
+    <button onclick="verifyKey()">تحقق الآن</button>
+
+    <div id="verifyResult" class="result"></div>
+</div>
+
+<script>
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function generateKey() {
+    const file = document.getElementById("imageInput").files[0];
+    const password = document.getElementById("passwordInput").value;
+
+    if (!file || !password) {
+        alert("يرجى اختيار صورة وإدخال كلمة مرور");
+        return;
+    }
+
+    const base64 = await toBase64(file);
+
+    const res = await fetch("/api/generate-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64, password })
+    });
+
+    const data = await res.json();
+    document.getElementById("generateResult").innerText = JSON.stringify(data, null, 2);
+}
+
+async function verifyKey() {
+    const file = document.getElementById("verifyImage").files[0];
+    const password = document.getElementById("verifyPassword").value;
+    const finalKey = document.getElementById("verifyFinalKey").value;
+
+    if (!file || !password || !finalKey) {
+        alert("يرجى إدخال جميع البيانات");
+        return;
+    }
+
+    const base64 = await toBase64(file);
+
+    const res = await fetch("/api/verify-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64, password, finalKey })
+    });
+
+    const data = await res.json();
+    document.getElementById("verifyResult").innerText = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>

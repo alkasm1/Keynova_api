@@ -32,7 +32,7 @@
         border-radius: 12px;
         border: 1px solid #333;
     }
-    input, textarea {
+    select, input, textarea {
         width: 100%;
         padding: 12px;
         margin: 10px 0;
@@ -68,53 +68,64 @@
 
 <header>
     <h1>Keynova API</h1>
-    <p>نظام القفل الإدراكي – صورة + كلمة مرور = مفتاح غير قابل للكسر</p>
+    <p>نظام القفل الإدراكي – صورة ثابتة + كلمة مرور = مفتاح غير قابل للكسر</p>
 </header>
 
+<!-- إنشاء المفتاح -->
 <div class="container">
     <h2>🔐 تجربة إنشاء مفتاح</h2>
-    <input type="file" id="imageInput">
+
+    <label>اختر صورة:</label>
+    <select id="imageID">
+        <option value="img01">الصورة 1</option>
+        <option value="img02">الصورة 2</option>
+        <option value="img03">الصورة 3</option>
+        <option value="img04">الصورة 4</option>
+    </select>
+
     <input type="text" id="passwordInput" placeholder="أدخل كلمة المرور">
+
     <button onclick="generateKey()">إنشاء المفتاح</button>
 
     <div id="generateResult" class="result"></div>
 </div>
 
+<!-- التحقق -->
 <div class="container">
     <h2>🧪 تجربة التحقق من المفتاح</h2>
-    <input type="file" id="verifyImage">
+
+    <label>اختر نفس الصورة:</label>
+    <select id="verifyImageID">
+        <option value="img01">الصورة 1</option>
+        <option value="img02">الصورة 2</option>
+        <option value="img03">الصورة 3</option>
+        <option value="img04">الصورة 4</option>
+    </select>
+
     <input type="text" id="verifyPassword" placeholder="أدخل كلمة المرور">
     <textarea id="verifyFinalKey" placeholder="الصق المفتاح النهائي هنا"></textarea>
+
     <button onclick="verifyKey()">تحقق الآن</button>
 
     <div id="verifyResult" class="result"></div>
 </div>
 
 <script>
-function toBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
+const API_BASE = "https://keynova-api.vercel.app"; // ← عدّلها إذا كان اسم مشروعك مختلف
 
 async function generateKey() {
-    const file = document.getElementById("imageInput").files[0];
+    const imageID = document.getElementById("imageID").value;
     const password = document.getElementById("passwordInput").value;
 
-    if (!file || !password) {
-        alert("يرجى اختيار صورة وإدخال كلمة مرور");
+    if (!imageID || !password) {
+        alert("اختر صورة وأدخل كلمة المرور");
         return;
     }
 
-    const base64 = await toBase64(file);
-
-    const res = await fetch("/api/generate-key", {
+    const res = await fetch(`${API_BASE}/api/generate-key`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64, password })
+        body: JSON.stringify({ imageID, password })
     });
 
     const data = await res.json();
@@ -122,21 +133,19 @@ async function generateKey() {
 }
 
 async function verifyKey() {
-    const file = document.getElementById("verifyImage").files[0];
+    const imageID = document.getElementById("verifyImageID").value;
     const password = document.getElementById("verifyPassword").value;
     const finalKey = document.getElementById("verifyFinalKey").value;
 
-    if (!file || !password || !finalKey) {
+    if (!imageID || !password || !finalKey) {
         alert("يرجى إدخال جميع البيانات");
         return;
     }
 
-    const base64 = await toBase64(file);
-
-    const res = await fetch("/api/verify-key", {
+    const res = await fetch(`${API_BASE}/api/verify-key`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64, password, finalKey })
+        body: JSON.stringify({ imageID, password, finalKey })
     });
 
     const data = await res.json();

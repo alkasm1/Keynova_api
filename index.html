@@ -76,12 +76,7 @@
     <h2>🔐 تجربة إنشاء مفتاح</h2>
 
     <label>اختر صورة:</label>
-    <select id="imageID">
-        <option value="img01">الصورة 1</option>
-        <option value="img02">الصورة 2</option>
-        <option value="img03">الصورة 3</option>
-        <option value="img04">الصورة 4</option>
-    </select>
+    <select id="imageURL"></select>
 
     <input type="text" id="passwordInput" placeholder="أدخل كلمة المرور">
 
@@ -95,12 +90,7 @@
     <h2>🧪 تجربة التحقق من المفتاح</h2>
 
     <label>اختر نفس الصورة:</label>
-    <select id="verifyImageID">
-        <option value="img01">الصورة 1</option>
-        <option value="img02">الصورة 2</option>
-        <option value="img03">الصورة 3</option>
-        <option value="img04">الصورة 4</option>
-    </select>
+    <select id="verifyImageURL"></select>
 
     <input type="text" id="verifyPassword" placeholder="أدخل كلمة المرور">
     <textarea id="verifyFinalKey" placeholder="الصق المفتاح النهائي هنا"></textarea>
@@ -111,41 +101,67 @@
 </div>
 
 <script>
-const API_BASE = "https://keynova-api.vercel.app"; // ← عدّلها إذا كان اسم مشروعك مختلف
+/* رابط API */
+const API_BASE = "https://keynova-api.vercel.app";
 
+/* مكتبة الصور الطبيعية */
+const naturalImages = [
+  { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=300&h=300', name: 'جبال الثلج' },
+  { url: 'https://images.unsplash.com/photo-1464822759844-d150b9014e9e?auto=format&fit=crop&w=300&h=300', name: 'قمم الجبال' },
+  { url: 'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?auto=format&fit=crop&w=300&h=300', name: 'جبال الضباب' },
+  { url: 'https://images.unsplash.com/photo-1533310266094-8898a03807dd?auto=format&fit=crop&w=300&h=300', name: 'الوديان الخضراء' },
+  { url: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?auto=format&fit=crop&w=300&h=300', name: 'جبال الغروب' },
+  { url: 'https://images.unsplash.com/photo-1454391304352-2bf4678b1a7a?auto=format&fit=crop&w=300&h=300', name: 'المرتفعات الصخرية' },
+  { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&h=300', name: 'الغابات المطيرة' },
+  { url: 'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?auto=format&fit=crop&w=300&h=300', name: 'أشجار الصنوبر' },
+  { url: 'https://images.unsplash.com/photo-1574263867128-dd9a5af88cff?auto=format&fit=crop&w=300&h=300', name: 'ممر الغابة' },
+  { url: 'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?auto=format&fit=crop&w=300&h=300', name: 'الغابة الخضراء' }
+];
+
+/* تحميل الصور في القوائم */
+function loadImages() {
+    const select1 = document.getElementById("imageURL");
+    const select2 = document.getElementById("verifyImageURL");
+
+    naturalImages.forEach(img => {
+        const option1 = document.createElement("option");
+        option1.value = img.url;
+        option1.textContent = img.name;
+        select1.appendChild(option1);
+
+        const option2 = document.createElement("option");
+        option2.value = img.url;
+        option2.textContent = img.name;
+        select2.appendChild(option2);
+    });
+}
+loadImages();
+
+/* إنشاء المفتاح */
 async function generateKey() {
-    const imageID = document.getElementById("imageID").value;
+    const imageURL = document.getElementById("imageURL").value;
     const password = document.getElementById("passwordInput").value;
-
-    if (!imageID || !password) {
-        alert("اختر صورة وأدخل كلمة المرور");
-        return;
-    }
 
     const res = await fetch(`${API_BASE}/api/generate-key`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageID, password })
+        body: JSON.stringify({ imageURL, password })
     });
 
     const data = await res.json();
     document.getElementById("generateResult").innerText = JSON.stringify(data, null, 2);
 }
 
+/* التحقق من المفتاح */
 async function verifyKey() {
-    const imageID = document.getElementById("verifyImageID").value;
+    const imageURL = document.getElementById("verifyImageURL").value;
     const password = document.getElementById("verifyPassword").value;
     const finalKey = document.getElementById("verifyFinalKey").value;
-
-    if (!imageID || !password || !finalKey) {
-        alert("يرجى إدخال جميع البيانات");
-        return;
-    }
 
     const res = await fetch(`${API_BASE}/api/verify-key`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageID, password, finalKey })
+        body: JSON.stringify({ imageURL, password, finalKey })
     });
 
     const data = await res.json();

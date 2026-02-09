@@ -1,25 +1,20 @@
 import crypto from "crypto";
-import fs from "fs";
-import path from "path";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { imageID, password, finalKey } = req.body;
+  const { imageURL, password, finalKey } = req.body;
 
-  if (!imageID || !password || !finalKey) {
+  if (!imageURL || !password || !finalKey) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const imagePath = path.join(process.cwd(), "images", `${imageID}.png`);
-
-  if (!fs.existsSync(imagePath)) {
-    return res.status(400).json({ error: "Image not found" });
-  }
-
-  const imageBuffer = fs.readFileSync(imagePath);
+  // Fetch image bytes from URL
+  const response = await fetch(imageURL);
+  const arrayBuffer = await response.arrayBuffer();
+  const imageBuffer = Buffer.from(arrayBuffer);
 
   const imageHash = crypto.createHash("sha256").update(imageBuffer).digest("hex");
   const passwordHash = crypto.createHash("sha256").update(password).digest("hex");

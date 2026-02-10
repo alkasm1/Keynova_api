@@ -61,6 +61,8 @@
         border-radius: 10px;
         font-size: 14px;
         word-wrap: break-word;
+        text-align: left;
+        direction: ltr;
     }
 </style>
 </head>
@@ -92,7 +94,7 @@
     <label>اختر نفس الصورة:</label>
     <select id="verifyImageURL"></select>
 
-    <input type="text" id="verifyPassword" placeholder="أدخل كلمة المرور">
+    <input type="text" id="verifyPassword" placeholder="أدخل نفس كلمة المرور">
     <textarea id="verifyFinalKey" placeholder="الصق المفتاح النهائي هنا"></textarea>
 
     <button onclick="verifyKey()">تحقق الآن</button>
@@ -104,18 +106,32 @@
 /* رابط API */
 const API_BASE = "https://keynova-api.vercel.app";
 
-/* مكتبة الصور الطبيعية */
+/* مكتبة الصور من مجلد images داخل المشروع */
 const naturalImages = [
-  { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=300&h=300', name: 'جبال الثلج' },
-  { url: 'https://images.unsplash.com/photo-1464822759844-d150b9014e9e?auto=format&fit=crop&w=300&h=300', name: 'قمم الجبال' },
-  { url: 'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?auto=format&fit=crop&w=300&h=300', name: 'جبال الضباب' },
-  { url: 'https://images.unsplash.com/photo-1533310266094-8898a03807dd?auto=format&fit=crop&w=300&h=300', name: 'الوديان الخضراء' },
-  { url: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?auto=format&fit=crop&w=300&h=300', name: 'جبال الغروب' },
-  { url: 'https://images.unsplash.com/photo-1454391304352-2bf4678b1a7a?auto=format&fit=crop&w=300&h=300', name: 'المرتفعات الصخرية' },
-  { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&h=300', name: 'الغابات المطيرة' },
-  { url: 'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?auto=format&fit=crop&w=300&h=300', name: 'أشجار الصنوبر' },
-  { url: 'https://images.unsplash.com/photo-1574263867128-dd9a5af88cff?auto=format&fit=crop&w=300&h=300', name: 'ممر الغابة' },
-  { url: 'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?auto=format&fit=crop&w=300&h=300', name: 'الغابة الخضراء' }
+  { url: "/images/image1.jpeg",  name: "صورة 1" },
+  { url: "/images/image2.jpeg",  name: "صورة 2" },
+  { url: "/images/image3.jpeg",  name: "صورة 3" },
+  { url: "/images/image4.jpeg",  name: "صورة 4" },
+  { url: "/images/image5.jpeg",  name: "صورة 5" },
+  { url: "/images/image6.jpeg",  name: "صورة 6" },
+  { url: "/images/image7.jpeg",  name: "صورة 7" },
+  { url: "/images/image8.jpeg",  name: "صورة 8" },
+  { url: "/images/image9.jpeg",  name: "صورة 9" },
+  { url: "/images/image10.jpeg", name: "صورة 10" },
+  { url: "/images/image11.jpeg", name: "صورة 11" },
+  { url: "/images/image12.jpeg", name: "صورة 12" },
+  { url: "/images/image13.jpeg", name: "صورة 13" },
+  { url: "/images/image14.jpeg", name: "صورة 14" },
+  { url: "/images/image15.jpeg", name: "صورة 15" },
+  { url: "/images/image16.jpeg", name: "صورة 16" },
+  { url: "/images/image17.jpeg", name: "صورة 17" },
+  { url: "/images/image18.jpeg", name: "صورة 18" },
+  { url: "/images/image19.jpeg", name: "صورة 19" },
+  { url: "/images/image20.jpeg", name: "صورة 20" },
+  { url: "/images/image21.jpeg", name: "صورة 21" },
+  { url: "/images/image22.jpeg", name: "صورة 22" },
+  { url: "/images/image23.jpeg", name: "صورة 23" },
+  { url: "/images/image24.jpeg", name: "صورة 24" }
 ];
 
 /* تحميل الصور في القوائم */
@@ -140,7 +156,12 @@ loadImages();
 /* إنشاء المفتاح */
 async function generateKey() {
     const imageURL = document.getElementById("imageURL").value;
-    const password = document.getElementById("passwordInput").value;
+    const password = document.getElementById("passwordInput").value.trim();
+
+    if (!imageURL || !password) {
+        document.getElementById("generateResult").innerText = "الرجاء اختيار صورة وإدخال كلمة مرور.";
+        return;
+    }
 
     const res = await fetch(`${API_BASE}/api/generate-key`, {
         method: "POST",
@@ -155,8 +176,13 @@ async function generateKey() {
 /* التحقق من المفتاح */
 async function verifyKey() {
     const imageURL = document.getElementById("verifyImageURL").value;
-    const password = document.getElementById("verifyPassword").value;
-    const finalKey = document.getElementById("verifyFinalKey").value;
+    const password = document.getElementById("verifyPassword").value.trim();
+    const finalKey = document.getElementById("verifyFinalKey").value.trim();
+
+    if (!imageURL || !password || !finalKey) {
+        document.getElementById("verifyResult").innerText = "الرجاء اختيار نفس الصورة، وإدخال نفس كلمة المرور، ولصق المفتاح النهائي.";
+        return;
+    }
 
     const res = await fetch(`${API_BASE}/api/verify-key`, {
         method: "POST",

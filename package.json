@@ -8,9 +8,7 @@
     "start": "vercel dev"
   },
   "dependencies": {
-    "crypto": "latest"
+    "crypto": "latest",
+    "sharp": "latest"
   }
-}
-"dependencies": {
-  "sharp": "latest"
 }

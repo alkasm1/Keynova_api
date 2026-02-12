@@ -154,7 +154,7 @@ async function generateKey() {
 async function verifyKey() {
     const imageURL = document.getElementById("verifyImageURL").value;
     const password = document.getElementById("verifyPassword").value.trim();
-  const finalKey = document.getElementById("verifyFinalKey").value.trim().replace(/\s+/g, "");
+    const finalKey = document.getElementById("verifyFinalKey").value.replace(/[^a-fA-F0-9]/g, "");
 
     if (!imageURL || !password || !finalKey) {
         document.getElementById("verifyResult").innerText = "الرجاء اختيار الصورة، إدخال كلمة المرور، ولصق المفتاح النهائي.";

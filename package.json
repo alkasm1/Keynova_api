@@ -1,14 +1,8 @@
 {
   "name": "keynova-api",
   "version": "1.0.0",
-  "description": "KeynovaLock API - Image + Password Hashing",
-  "main": "index.js",
   "type": "module",
-  "scripts": {
-    "start": "vercel dev"
-  },
   "dependencies": {
-    "crypto": "latest",
-    "sharp": "latest"
+    "node-fetch": "^3.3.2"
   }
 }

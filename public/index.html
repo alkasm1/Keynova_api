@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Keynova API – القفل الإدراكي</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #0d0d0d;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        text-align: center;
-    }
-    header {
-        padding: 60px 20px;
-        background: linear-gradient(135deg, #4b0082, #000);
-    }
-    h1 {
-        font-size: 40px;
-        margin-bottom: 10px;
-    }
-    p {
-        font-size: 18px;
-        opacity: 0.9;
-    }
-    .container {
-        margin: 40px auto;
-        max-width: 600px;
-        background: #111;
-        padding: 25px;
-        border-radius: 12px;
-        border: 1px solid #333;
-    }
-    select, input, textarea {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 8px;
-        border: none;
-        background: #222;
-        color: #fff;
-    }
-    button {
-        padding: 12px 25px;
-        background: #6a0dad;
-        border: none;
-        color: #fff;
-        font-size: 18px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    button:hover {
-        background: #520a9e;
-    }
-    .result {
-        margin-top: 20px;
-        background: #1a1a1a;
-        padding: 15px;
-        border-radius: 10px;
-        font-size: 14px;
-        word-wrap: break-word;
-        text-align: left;
-        direction: ltr;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>Keynova API – القفل الإدراكي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #4b0082, #000);
+        }
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .container {
+            margin: 40px auto;
+            max-width: 600px;
+            background: #111;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            background: #222;
+            color: #fff;
+        }
+        button {
+            padding: 12px 25px;
+            background: #6a0dad;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #520a9e;
+        }
+        .result {
+            margin-top: 20px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            word-wrap: break-word;
+            text-align: left;
+            direction: ltr;
+        }
+    </style>
 </head>
 <body>
 
@@ -106,36 +106,17 @@
 /* رابط API */
 const API_BASE = "https://keynova-api.vercel.app";
 
-/* رابط الصور المطلق */
+/* رابط الصور */
 const BASE = "https://keynova-api.vercel.app";
 
 /* مكتبة الصور */
-const naturalImages = [
-  { url: `${BASE}/images/image1.jpeg`,  name: "صورة 1" },
-  { url: `${BASE}/images/image2.jpeg`,  name: "صورة 2" },
-  { url: `${BASE}/images/image3.jpeg`,  name: "صورة 3" },
-  { url: `${BASE}/images/image4.jpeg`,  name: "صورة 4" },
-  { url: `${BASE}/images/image5.jpeg`,  name: "صورة 5" },
-  { url: `${BASE}/images/image6.jpeg`,  name: "صورة 6" },
-  { url: `${BASE}/images/image7.jpeg`,  name: "صورة 7" },
-  { url: `${BASE}/images/image8.jpeg`,  name: "صورة 8" },
-  { url: `${BASE}/images/image9.jpeg`,  name: "صورة 9" },
-  { url: `${BASE}/images/image10.jpeg`, name: "صورة 10" },
-  { url: `${BASE}/images/image11.jpeg`, name: "صورة 11" },
-  { url: `${BASE}/images/image12.jpeg`, name: "صورة 12" },
-  { url: `${BASE}/images/image13.jpeg`, name: "صورة 13" },
-  { url: `${BASE}/images/image14.jpeg`, name: "صورة 14" },
-  { url: `${BASE}/images/image15.jpeg`, name: "صورة 15" },
-  { url: `${BASE}/images/image16.jpeg`, name: "صورة 16" },
-  { url: `${BASE}/images/image17.jpeg`, name: "صورة 17" },
-  { url: `${BASE}/images/image18.jpeg`, name: "صورة 18" },
-  { url: `${BASE}/images/image19.jpeg`, name: "صورة 19" },
-  { url: `${BASE}/images/image20.jpeg`, name: "صورة 20" },
-  { url: `${BASE}/images/image21.jpeg`, name: "صورة 21" },
-  { url: `${BASE}/images/image22.jpeg`, name: "صورة 22" },
-  { url: `${BASE}/images/image23.jpeg`, name: "صورة 23" },
-  { url: `${BASE}/images/image24.jpeg`, name: "صورة 24" }
-];
+const naturalImages = [];
+for (let i = 1; i <= 24; i++) {
+    naturalImages.push({
+        url: `${BASE}/images/image${i}.jpeg`,
+        name: `صورة ${i}`
+    });
+}
 
 /* تحميل الصور في القوائم */
 function loadImages() {
@@ -143,15 +124,8 @@ function loadImages() {
     const select2 = document.getElementById("verifyImageURL");
 
     naturalImages.forEach(img => {
-        const option1 = document.createElement("option");
-        option1.value = img.url;
-        option1.textContent = img.name;
-        select1.appendChild(option1);
-
-        const option2 = document.createElement("option");
-        option2.value = img.url;
-        option2.textContent = img.name;
-        select2.appendChild(option2);
+        select1.add(new Option(img.name, img.url));
+        select2.add(new Option(img.name, img.url));
     });
 }
 loadImages();
@@ -183,7 +157,7 @@ async function verifyKey() {
     const finalKey = document.getElementById("verifyFinalKey").value.trim();
 
     if (!imageURL || !password || !finalKey) {
-        document.getElementById("verifyResult").innerText = "الرجاء اختيار نفس الصورة، وإدخال نفس كلمة المرور، ولصق المفتاح النهائي.";
+        document.getElementById("verifyResult").innerText = "الرجاء اختيار الصورة، إدخال كلمة المرور، ولصق المفتاح النهائي.";
         return;
     }
 

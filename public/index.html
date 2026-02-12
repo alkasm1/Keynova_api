@@ -1,171 +1,169 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>Keynova Lock</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h2 {
-      margin-top: 40px;
-    }
-
-    .image-picker {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .image-picker img {
-      width: 90px;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 3px solid transparent;
-      transition: 0.2s;
-    }
-
-    .image-picker img.selected {
-      border-color: #6a0dad;
-      transform: scale(1.05);
-    }
-
-    .preview {
-      margin-top: 10px;
-      width: 200px;
-      border-radius: 10px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: #6a0dad;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    textarea {
-      width: 90%;
-      height: 80px;
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    pre {
-      background: #222;
-      color: #0f0;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: left;
-      direction: ltr;
-      overflow-x: auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Keynova API – القفل الإدراكي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #4b0082, #000);
+        }
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .container {
+            margin: 40px auto;
+            max-width: 600px;
+            background: #111;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            background: #222;
+            color: #fff;
+        }
+        button {
+            padding: 12px 25px;
+            background: #6a0dad;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #520a9e;
+        }
+        .result {
+            margin-top: 20px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            word-wrap: break-word;
+            text-align: left;
+            direction: ltr;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>🔐 Keynova Lock</h1>
-  <p>صورة + كلمة مرور = مفتاح غير قابل للكسر</p>
+<header>
+    <h1>Keynova API</h1>
+    <p>نظام القفل الإدراكي – صورة ثابتة + كلمة مرور = مفتاح غير قابل للكسر</p>
+</header>
 
-  <!-- اختيار الصورة -->
-  <h2>اختر صورة</h2>
-  <div class="image-picker" id="imagePicker"></div>
-  <img id="preview" class="preview" src="" hidden>
+<!-- إنشاء المفتاح -->
+<div class="container">
+    <h2>🔐 تجربة إنشاء مفتاح</h2>
 
-  <input id="password" type="text" placeholder="أدخل كلمة المرور">
+    <label>اختر صورة:</label>
+    <select id="imageURL"></select>
 
-  <br>
-  <button onclick="generateKey()">إنشاء المفتاح</button>
+    <input type="text" id="passwordInput" placeholder="أدخل كلمة المرور">
 
-  <h3>النتيجة:</h3>
-  <pre id="result"></pre>
+    <button onclick="generateKey()">إنشاء المفتاح</button>
 
-  <h2>التحقق من المفتاح</h2>
-  <textarea id="verifyKey" placeholder="الصق المفتاح هنا"></textarea>
-  <br>
-  <button onclick="verifyKeyNow()">تحقق الآن</button>
+    <div id="generateResult" class="result"></div>
+</div>
 
-  <pre id="verifyResult"></pre>
+<!-- التحقق -->
+<div class="container">
+    <h2>🧪 تجربة التحقق من المفتاح</h2>
+
+    <label>اختر نفس الصورة:</label>
+    <select id="verifyImageURL"></select>
+
+    <input type="text" id="verifyPassword" placeholder="أدخل نفس كلمة المرور">
+    <textarea id="verifyFinalKey" placeholder="الصق المفتاح النهائي هنا"></textarea>
+
+    <button onclick="verifyKey()">تحقق الآن</button>
+
+    <div id="verifyResult" class="result"></div>
+</div>
 
 <script>
-  // الصور المتوفرة
-  const images = ["image1.jpeg", "image2.jpeg", "image3.jpeg", "image4.jpeg"];
+/* مكتبة الصور */
+const naturalImages = [];
+for (let i = 1; i <= 24; i++) {
+    naturalImages.push({
+        url: `/images/image${i}.jpeg`,
+        name: `صورة ${i}`
+    });
+}
 
-  let selectedImage = null;
+/* تحميل الصور في القوائم */
+function loadImages() {
+    const select1 = document.getElementById("imageURL");
+    const select2 = document.getElementById("verifyImageURL");
 
-  // عرض الصور
-  const picker = document.getElementById("imagePicker");
-  images.forEach(img => {
-    const el = document.createElement("img");
-    el.src = "images/" + img;
-    el.onclick = () => selectImage(el, img);
-    picker.appendChild(el);
-  });
+    naturalImages.forEach(img => {
+        select1.add(new Option(img.name, img.url));
+        select2.add(new Option(img.name, img.url));
+    });
+}
+loadImages();
 
-  function selectImage(el, img) {
-    selectedImage = img;
+/* إنشاء المفتاح */
+async function generateKey() {
+    const imageURL = document.getElementById("imageURL").value;
+    const password = document.getElementById("passwordInput").value.trim();
 
-    document.querySelectorAll(".image-picker img").forEach(i => i.classList.remove("selected"));
-    el.classList.add("selected");
+    if (!imageURL || !password) {
+        document.getElementById("generateResult").innerText = "الرجاء اختيار صورة وإدخال كلمة مرور.";
+        return;
+    }
 
-    const preview = document.getElementById("preview");
-    preview.src = "images/" + img;
-    preview.hidden = false;
-  }
-
-  async function generateKey() {
-    if (!selectedImage) return alert("اختر صورة أولاً");
-    const password = document.getElementById("password").value;
-
-    const res = await fetch("/api/generate-key", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        imageURL: `/images/${selectedImage}`,
-        password
-      })
+    const res = await fetch(`/api/generate-key`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageURL, password })
     });
 
     const data = await res.json();
-    document.getElementById("result").textContent = JSON.stringify(data, null, 2);
-  }
+    document.getElementById("generateResult").innerText = JSON.stringify(data, null, 2);
+}
 
-  async function verifyKeyNow() {
-    if (!selectedImage) return alert("اختر نفس الصورة أولاً");
+/* التحقق من المفتاح */
+async function verifyKey() {
+    const imageURL = document.getElementById("verifyImageURL").value;
+    const password = document.getElementById("verifyPassword").value.trim();
+    const finalKey = document.getElementById("verifyFinalKey").value.trim().replace(/\s+/g, "");
 
-    const password = document.getElementById("password").value;
-    const finalKey = document.getElementById("verifyKey").value
-      .trim()
-      .replace(/\r/g, "")
-      .replace(/\n/g, "")
-      .replace(/\s+/g, "")
-      .replace(/[^a-fA-F0-9]/g, "");
+    if (!imageURL || !password || !finalKey) {
+        document.getElementById("verifyResult").innerText = "الرجاء اختيار الصورة، إدخال كلمة المرور، ولصق المفتاح النهائي.";
+        return;
+    }
 
-    const res = await fetch("/api/verify-key", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        imageURL: `/images/${selectedImage}`,
-        password,
-        finalKey
-      })
+    const res = await fetch(`/api/verify-key`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageURL, password, finalKey })
     });
 
     const data = await res.json();
-    document.getElementById("verifyResult").textContent = JSON.stringify(data, null, 2);
-  }
+    document.getElementById("verifyResult").innerText = JSON.stringify(data, null, 2);
+}
 </script>
 
 </body>

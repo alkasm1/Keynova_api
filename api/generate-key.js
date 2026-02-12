@@ -13,6 +13,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing imageURL or password" });
     }
 
+    // Normalize password (fix Arabic + Unicode issues)
+    const normalizedPassword = password.normalize("NFC");
+
     // Fetch image bytes
     const response = await fetch(imageURL);
     if (!response.ok) {
@@ -24,7 +27,7 @@ export default async function handler(req, res) {
 
     // Hashes
     const imageHash = crypto.createHash("sha256").update(imageBuffer).digest("hex");
-    const passwordHash = crypto.createHash("sha256").update(password).digest("hex");
+    const passwordHash = crypto.createHash("sha256").update(normalizedPassword).digest("hex");
     const finalKey = crypto.createHash("sha256").update(imageHash + passwordHash).digest("hex");
 
     return res.status(200).json({

@@ -13,6 +13,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Clean finalKey (remove spaces, newlines, hidden chars)
+    const finalKeyClean = finalKey.trim().replace(/\s+/g, "");
+
+    // Normalize password
+    const normalizedPassword = password.normalize("NFC");
+
     // Fetch image bytes
     const response = await fetch(imageURL);
     if (!response.ok) {
@@ -24,12 +30,15 @@ export default async function handler(req, res) {
 
     // Hashes
     const imageHash = crypto.createHash("sha256").update(imageBuffer).digest("hex");
-    const passwordHash = crypto.createHash("sha256").update(password).digest("hex");
+    const passwordHash = crypto.createHash("sha256").update(normalizedPassword).digest("hex");
     const generatedKey = crypto.createHash("sha256").update(imageHash + passwordHash).digest("hex");
 
-    const match = generatedKey === finalKey;
+    const match = generatedKey === finalKeyClean;
 
-    return res.status(200).json({ match, generatedKey });
+    return res.status(200).json({
+      match,
+      generatedKey
+    });
 
   } catch (err) {
     return res.status(500).json({ error: "Server error", details: err.message });

@@ -15,7 +15,12 @@ export default async function handler(req, res) {
 
     // Clean finalKey (remove spaces, newlines, hidden chars)
    
-    const finalKeyClean = finalKey.replace(/[^a-fA-F0-9]/g, "");
+   const finalKeyClean = finalKey
+  .trim()
+  .replace(/\r/g, "")
+  .replace(/\n/g, "")
+  .replace(/\s+/g, "")
+  .replace(/[^a-fA-F0-9]/g, "");
     
     // Normalize password
     const normalizedPassword = password.normalize("NFC");

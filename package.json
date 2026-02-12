@@ -6,3 +6,10 @@
     "node-fetch": "^3.3.2"
   }
 }
+{
+  "images": {
+    "sizes": [],
+    "domains": [],
+    "minimumCacheTTL": 0
+  }
+}

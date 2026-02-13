@@ -112,7 +112,7 @@
   const picker = document.getElementById("imagePicker");
   images.forEach(img => {
     const el = document.createElement("img");
-    el.src = "images/" + img;
+    el.src = "/images/" + img;
     el.onclick = () => selectImage(el, img);
     picker.appendChild(el);
   });
@@ -124,7 +124,7 @@
     el.classList.add("selected");
 
     const preview = document.getElementById("preview");
-    preview.src = "images/" + img;
+    preview.src = "/images/" + img;
     preview.hidden = false;
   }
 

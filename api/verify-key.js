@@ -54,3 +54,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Server error", details: err.message });
   }
 }
+if (imageURL.startsWith("/")) {
+  imageURL = `https://${req.headers.host}${imageURL}`;
+}

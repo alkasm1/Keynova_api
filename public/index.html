@@ -103,11 +103,17 @@
 </div>
 
 <script>
+/* رابط API */
+const API_BASE = "https://keynova-api.vercel.app";
+
+/* رابط الصور */
+const BASE = "https://keynova-api.vercel.app";
+
 /* مكتبة الصور */
 const naturalImages = [];
 for (let i = 1; i <= 24; i++) {
     naturalImages.push({
-        url: `/images/image${i}.jpeg`,
+        url: `${BASE}/images/image${i}.jpeg`,
         name: `صورة ${i}`
     });
 }
@@ -134,7 +140,7 @@ async function generateKey() {
         return;
     }
 
-    const res = await fetch(`/api/generate-key`, {
+    const res = await fetch(`${API_BASE}/api/generate-key`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageURL, password })
@@ -148,14 +154,20 @@ async function generateKey() {
 async function verifyKey() {
     const imageURL = document.getElementById("verifyImageURL").value;
     const password = document.getElementById("verifyPassword").value.trim();
-    const finalKey = document.getElementById("verifyFinalKey").value.trim().replace(/\s+/g, "");
-
+   const finalKey = document
+  .getElementById("verifyFinalKey")
+  .value
+  .trim()
+  .replace(/\r/g, "")
+  .replace(/\n/g, "")
+  .replace(/\s+/g, "")
+  .replace(/[^a-fA-F0-9]/g, "");
     if (!imageURL || !password || !finalKey) {
         document.getElementById("verifyResult").innerText = "الرجاء اختيار الصورة، إدخال كلمة المرور، ولصق المفتاح النهائي.";
         return;
     }
 
-    const res = await fetch(`/api/verify-key`, {
+    const res = await fetch(`${API_BASE}/api/verify-key`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageURL, password, finalKey })

@@ -7,19 +7,24 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const { imageURL, password } = req.body;
+    let { imageURL, password } = req.body;
 
     if (!imageURL || !password) {
       return res.status(400).json({ error: "Missing imageURL or password" });
     }
 
-    // Normalize password (fix Arabic + Unicode issues)
+    // Normalize password
     const normalizedPassword = password.normalize("NFC");
+
+    // Fix image URL (convert relative → absolute)
+    if (imageURL.startsWith("/")) {
+      imageURL = `https://${req.headers.host}${imageURL}`;
+    }
 
     // Fetch image bytes
     const response = await fetch(imageURL);
     if (!response.ok) {
-      return res.status(400).json({ error: "Failed to fetch image" });
+      return res.status(400).json({ error: "Failed to fetch image", url: imageURL });
     }
 
     const arrayBuffer = await response.arrayBuffer();
